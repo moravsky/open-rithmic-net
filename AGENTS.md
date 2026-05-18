@@ -1,4 +1,11 @@
-# RithmicBalancePnlTradeData Project Guide
+# OpenRithmic Project Guide
+
+## Layout
+- `OpenRithmic.Client/` -- class library (`namespace OpenRithmic`) that wraps R | API+ behind a clean event-driven `RithmicSession`. All `rapiplus.dll` references, callback overrides, `Ignorable<T>` unwrapping, and the dual-row PnL trick live here. The 325 connection-params files are embedded resources under `OpenRithmic.RApiConfig.*`.
+- `OpenRithmic.Console/` -- thin console app that consumes `OpenRithmic.Client`. CLI parsing in `CliOptions.cs`, formatting in `ConsoleRenderer.cs`, ~80-line `Program.cs`.
+- Future siblings: `OpenRithmic.Tui/` and `OpenRithmic.Gui/` will follow the same pattern -- subscribe to `RithmicSession` events, never reference `rapiplus.dll` directly.
+
+The repo directory and solution are both `OpenRithmic.NET`. (If you ever see the directory at `RithmicBalancePnlTradeData/`, the host hasn't been renamed yet -- rename to `OpenRithmic.NET/` to match.)
 
 ## Purpose
 A Rithmic R | API+ sample that connects to any Rithmic system/gateway and displays:
@@ -7,16 +14,17 @@ A Rithmic R | API+ sample that connects to any Rithmic system/gateway and displa
 - Trade data (fills and trade prints)
 
 ## Build & Run Commands
-- **Build**: `dotnet build RithmicBalancePnlTradeData/RithmicBalancePnlTradeData.csproj -c Release`
-- **Run (Rithmic Test default)**: `dotnet run --project RithmicBalancePnlTradeData -c Release -- --user <user> --password <password>`
-- **Run (specific gateway)**: `dotnet run --project RithmicBalancePnlTradeData -c Release -- --connection "Rithmic Test/Orangeburg" --user <user> --password <password>`
-- **List connections**: `dotnet run --project RithmicBalancePnlTradeData -c Release -- --list-connections`
+- **Build (solution)**: `dotnet build OpenRithmic.NET.slnx -c Release`
+- **Build (console only)**: `dotnet build OpenRithmic.Console/OpenRithmic.Console.csproj -c Release`
+- **Run (Rithmic Test default)**: `dotnet run --project OpenRithmic.Console -c Release -- --user <user> --password <password>`
+- **Run (specific gateway)**: `dotnet run --project OpenRithmic.Console -c Release -- --connection "Rithmic Test/Orangeburg" --user <user> --password <password>`
+- **List connections**: `dotnet run --project OpenRithmic.Console -c Release -- --list-connections`
 - **SSL cert file**: optional. The .NET R | API+ does not require an SSL cert auth file for normal login -- the shipped `SampleOrder.NET` does not set one and works against Rithmic Test. The `--cert <path>` flag exists to set `MML_SSL_CLNT_AUTH_FILE` if some flow needs it later; leave it unset unless Rithmic says otherwise.
 
 ## Connection Configuration (multi-gateway)
 Every supported `(System, Gateway)` pair ships as an embedded resource that the app loads and parses at startup.
 
-- **In-repo location**: `RithmicBalancePnlTradeData/RApiConfig/<System>_<Gateway>_connection_params.txt` (325 files, e.g. `Rithmic-Test_Orangeburg`, `TopstepTrader_Chicago-Area`, `Apex_Europe`, ...).
+- **In-repo location**: `OpenRithmic.Client/RApiConfig/<System>_<Gateway>_connection_params.txt` (325 files, e.g. `Rithmic-Test_Orangeburg`, `TopstepTrader_Chicago-Area`, `Apex_Europe`, ...).
 - **csproj embedding**: include them with `<EmbeddedResource Include="RApiConfig\*.txt" />` so they ship inside the assembly (no external file dependency).
 - **Parsing**: each file's header has `System Name : <S>` and `Gateway Name : <G>`; the ".NET" block underneath lists `REngineParams.AdmCnnctPt / DmnSrvrAddr / DomainName / LicSrvrAddr / LocBrokAddr / LoggerAddr` and the `login()` connect points (`sMdCnnctPt`, `sIhCnnctPt`, `sTsCnnctPt`, `sPnLCnnctPt`). Parse those lines into a `RithmicConnection` record.
 - **Selection**: a single `--connection "<System>/<Gateway>"` CLI flag picks one. The flag value matches the parsed `System Name` and `Gateway Name` (case-insensitive, trimmed). Provide `--list-connections` to enumerate what's embedded.

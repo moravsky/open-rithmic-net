@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Platforms>AnyCPU</Platforms>
+    <RootNamespace>OpenRithmic</RootNamespace>
+    <AssemblyName>OpenRithmic.Client</AssemblyName>
+    <NoWarn>$(NoWarn);MSB3270;NU1701</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <RithmicRefRoot>..\..\RithmicRef\RApiPlus.NET.13.6.0.0\13.6.0.0</RithmicRefRoot>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="rapiplus">
+      <HintPath>$(RithmicRefRoot)\win10\lib_472\rapiplus.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="RApiConfig\*.txt" />
+  </ItemGroup>
+
+</Project>
