@@ -8,6 +8,13 @@ internal static class ConsoleRenderer
     private static readonly object _gate = new();
     private static readonly CultureInfo _us = CultureInfo.GetCultureInfo("en-US");
 
+    // Rithmic emits account-summary and per-symbol PnL on independent callbacks,
+    // so we keep the latest snapshot per account and reprint the full picture
+    // on every event. Otherwise a block can show a symbol that just ticked but
+    // hide one that hasn't (or no symbols at all).
+    private static readonly Dictionary<string, AccountSummary> _summaries = new();
+    private static readonly Dictionary<string, Dictionary<string, SymbolPnl>> _symbols = new();
+
     public static void Status(string message)
     {
         lock (_gate)
@@ -54,26 +61,8 @@ internal static class ConsoleRenderer
     {
         lock (_gate)
         {
-            var title = $" {s.Account.AccountId}  [{s.Account.FcmId}] ";
-            var bar = new string('=', Math.Max(title.Length, 44));
-            var prev = Console.ForegroundColor;
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Out.WriteLine(bar);
-            Console.Out.WriteLine(title);
-            Console.Out.WriteLine(bar);
-            Console.ForegroundColor = prev;
-            Write("Account Balance",      s.AccountBalance);
-            Write("Cash On Hand",         s.CashOnHand);
-            Write("Margin Balance",       s.MarginBalance);
-            Write("Available Buying Pwr", s.AvailableBuyingPower);
-            Write("Used Buying Power",    s.UsedBuyingPower);
-            Write("Reserved Margin",      s.ReservedMargin);
-            WriteSep();
-            Write("Open P&L",             s.OpenPnl);
-            Write("Closed P&L",           s.ClosedPnl);
-            Console.Out.WriteLine($"  {"as of",-22}  {s.Timestamp.ToLocalTime():HH:mm:ss}");
-            Console.Out.WriteLine(bar);
-            Console.Out.WriteLine();
+            _summaries[AccountKey(s.Account)] = s;
+            Render(AccountKey(s.Account));
         }
     }
 
@@ -81,20 +70,66 @@ internal static class ConsoleRenderer
     {
         lock (_gate)
         {
-            var line = string.Format(_us,
-                "  {0,-8} {1,-6}  pos={2,4}  open={3,12}  closed={4,12}  buy={5,4}  sell={6,4}  workBuy={7,3}  workSell={8,3}",
-                p.Symbol,
-                p.Exchange,
-                p.Position?.ToString() ?? "-",
-                Money(p.OpenPnl),
-                Money(p.ClosedPnl),
-                p.BuyQty?.ToString() ?? "-",
-                p.SellQty?.ToString() ?? "-",
-                p.BuyWorkingQty?.ToString() ?? "-",
-                p.SellWorkingQty?.ToString() ?? "-");
-            Console.Out.WriteLine(line);
+            var accountKey = AccountKey(p.Account);
+            if (!_symbols.TryGetValue(accountKey, out var bySymbol))
+                _symbols[accountKey] = bySymbol = new();
+            bySymbol[$"{p.Exchange}|{p.Symbol}"] = p;
+            Render(accountKey);
         }
     }
+
+    private static void Render(string accountKey)
+    {
+        if (!_summaries.TryGetValue(accountKey, out var s))
+            return;
+
+        var title = $" {s.Account.AccountId}  [{s.Account.FcmId}] ";
+        var bar = new string('=', Math.Max(title.Length, 44));
+        var prev = Console.ForegroundColor;
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        Console.Out.WriteLine(bar);
+        Console.Out.WriteLine(title);
+        Console.Out.WriteLine(bar);
+        Console.ForegroundColor = prev;
+        Write("Account Balance",      s.AccountBalance);
+        Write("Cash On Hand",         s.CashOnHand);
+        Write("Margin Balance",       s.MarginBalance);
+        Write("Available Buying Pwr", s.AvailableBuyingPower);
+        Write("Used Buying Power",    s.UsedBuyingPower);
+        Write("Reserved Margin",      s.ReservedMargin);
+        WriteSep();
+        Write("Open P&L",             s.OpenPnl);
+        Write("Closed P&L",           s.ClosedPnl);
+        Console.Out.WriteLine($"  {"as of",-22}  {s.Timestamp.ToLocalTime():HH:mm:ss}");
+
+        if (_symbols.TryGetValue(accountKey, out var bySymbol))
+        {
+            var open = bySymbol.Values
+                .Where(x => x.Position is long pos && pos != 0)
+                .OrderBy(x => x.Symbol, StringComparer.Ordinal)
+                .ToArray();
+            if (open.Length > 0)
+            {
+                WriteSep();
+                foreach (var p in open)
+                    Console.Out.WriteLine(string.Format(_us,
+                        "  {0,-8} {1,-6}  pos={2,4}  open={3,12}  closed={4,12}  buy={5,4}  sell={6,4}  workBuy={7,3}  workSell={8,3}",
+                        p.Symbol,
+                        p.Exchange,
+                        p.Position?.ToString() ?? "-",
+                        Money(p.OpenPnl),
+                        Money(p.ClosedPnl),
+                        p.BuyQty?.ToString() ?? "-",
+                        p.SellQty?.ToString() ?? "-",
+                        p.BuyWorkingQty?.ToString() ?? "-",
+                        p.SellWorkingQty?.ToString() ?? "-"));
+            }
+        }
+        Console.Out.WriteLine(bar);
+        Console.Out.WriteLine();
+    }
+
+    private static string AccountKey(Account a) => $"{a.FcmId}|{a.IbId}|{a.AccountId}";
 
     public static void Fill(Fill f)
     {
