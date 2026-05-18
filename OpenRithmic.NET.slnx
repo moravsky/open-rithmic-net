@@ -1,3 +1,4 @@
 <Solution>
-  <Project Path="RithmicBalancePnlTradeData/RithmicBalancePnlTradeData.csproj" />
+  <Project Path="OpenRithmic.Console/OpenRithmic.Console.csproj" />
+  <Project Path="OpenRithmic.Client/OpenRithmic.Client.csproj" />
 </Solution>

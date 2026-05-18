@@ -1,11 +1,11 @@
-using System.Reflection;
+﻿using System.Reflection;
 using System.Text.RegularExpressions;
 
-namespace RithmicBalancePnlTradeData;
+namespace OpenRithmic;
 
 public static class ConnectionRegistry
 {
-    private const string ResourcePrefix = "RithmicBalancePnlTradeData.RApiConfig.";
+    private const string ResourcePrefix = "OpenRithmic.RApiConfig.";
     private const string ResourceSuffix = "_connection_params.txt";
 
     private static readonly Lazy<IReadOnlyList<RithmicConnection>> _all = new(Load);

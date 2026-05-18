@@ -1,4 +1,4 @@
-namespace RithmicBalancePnlTradeData;
+﻿namespace OpenRithmic;
 
 public sealed record RithmicConnection(
     string SystemName,

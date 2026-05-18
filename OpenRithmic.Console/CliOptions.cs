@@ -1,4 +1,4 @@
-namespace RithmicBalancePnlTradeData;
+﻿namespace OpenRithmic.ConsoleApp;
 
 internal sealed class CliOptions
 {
@@ -55,7 +55,7 @@ internal sealed class CliOptions
 
     public static string UsageText => """
         Usage:
-          RithmicBalancePnlTradeData --user <user> --password <password> [options]
+          OpenRithmic.Console --user <user> --password <password> [options]
 
         Options:
           --connection <"System/Gateway">  Pick a Rithmic system/gateway (default: "Rithmic Test/Orangeburg")

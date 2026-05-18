@@ -7,24 +7,12 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <Platforms>AnyCPU</Platforms>
-    <RootNamespace>RithmicBalancePnlTradeData</RootNamespace>
-    <AssemblyName>RithmicBalancePnlTradeData</AssemblyName>
-    <NoWarn>$(NoWarn);MSB3270;NU1701</NoWarn>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <RithmicRefRoot>..\..\RithmicRef\RApiPlus.NET.13.6.0.0\13.6.0.0</RithmicRefRoot>
+    <RootNamespace>OpenRithmic.ConsoleApp</RootNamespace>
+    <AssemblyName>OpenRithmic.Console</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="rapiplus">
-      <HintPath>$(RithmicRefRoot)\win10\lib_472\rapiplus.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="RApiConfig\*.txt" />
+    <ProjectReference Include="..\OpenRithmic.Client\OpenRithmic.Client.csproj" />
   </ItemGroup>
 
 </Project>
