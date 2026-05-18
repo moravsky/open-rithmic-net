@@ -1,4 +1,5 @@
 <Solution>
   <Project Path="OpenRithmic.Console/OpenRithmic.Console.csproj" />
   <Project Path="OpenRithmic.Client/OpenRithmic.Client.csproj" />
+  <Project Path="OpenRithmic.Client.Tests/OpenRithmic.Client.Tests.csproj" />
 </Solution>

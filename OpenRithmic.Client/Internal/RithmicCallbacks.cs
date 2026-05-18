@@ -15,27 +15,12 @@ internal sealed class RithmicCallbacks(RithmicSession session) : RCallbacks
 
     public override void Alert(AlertInfo o)
     {
-        var plant = o.ConnectionId switch
-        {
-            ConnectionId.MarketData    => RithmicPlant.MarketData,
-            ConnectionId.TradingSystem => RithmicPlant.TradingSystem,
-            ConnectionId.History       => RithmicPlant.History,
-            ConnectionId.PnL           => RithmicPlant.PnL,
-            ConnectionId.Repository    => RithmicPlant.Repository,
-            _                          => RithmicPlant.Other,
-        };
-
-        var kind = o.AlertType switch
-        {
-            AlertType.ConnectionOpened => AlertKind.ConnectionOpened,
-            AlertType.ConnectionClosed => AlertKind.ConnectionClosed,
-            AlertType.ConnectionBroken => AlertKind.ConnectionBroken,
-            AlertType.LoginComplete    => AlertKind.LoginComplete,
-            AlertType.LoginFailed      => AlertKind.LoginFailed,
-            _                          => AlertKind.Other,
-        };
-
-        _session.HandleAlert(new RithmicAlert(plant, kind, o.Message ?? "", o.RpCode));
+        var alert = new RithmicAlert(
+            RithmicMappers.MapPlant(o.ConnectionId),
+            RithmicMappers.MapAlertKind(o.AlertType),
+            o.Message ?? "",
+            o.RpCode);
+        _session.HandleAlert(alert);
     }
 
     public override void AccountList(AccountListInfo o)
@@ -63,7 +48,7 @@ internal sealed class RithmicCallbacks(RithmicSession session) : RCallbacks
         var account = ResolveAccount(p.Account);
         var ts = IgnorableExt.ToUtc(p.Ssboe, p.Usecs);
 
-        if (string.IsNullOrEmpty(p.Symbol))
+        if (RithmicMappers.IsAccountSummaryRow(p.Symbol))
         {
             var summary = new AccountSummary(
                 Account: account,
@@ -101,7 +86,7 @@ internal sealed class RithmicCallbacks(RithmicSession session) : RCallbacks
     public override void FillReport(OrderFillReport o)
     {
         var account = ResolveAccount(o.Account);
-        var side = o.BuySellType == Constants.BUY_SELL_TYPE_BUY ? OrderSide.Buy : OrderSide.Sell;
+        var side = RithmicMappers.MapSide(o.BuySellType);
         var ts = IgnorableExt.ToUtc(o.Ssboe, o.Usecs);
         var fill = new Fill(
             Account:   account,
@@ -123,15 +108,11 @@ internal sealed class RithmicAdminCallbacks(RithmicSession session) : AdmCallbac
 
     public override void Alert(AlertInfo o)
     {
-        var kind = o.AlertType switch
-        {
-            AlertType.ConnectionOpened => AlertKind.ConnectionOpened,
-            AlertType.ConnectionClosed => AlertKind.ConnectionClosed,
-            AlertType.ConnectionBroken => AlertKind.ConnectionBroken,
-            AlertType.LoginComplete    => AlertKind.LoginComplete,
-            AlertType.LoginFailed      => AlertKind.LoginFailed,
-            _                          => AlertKind.Other,
-        };
-        _session.HandleAlert(new RithmicAlert(RithmicPlant.Admin, kind, o.Message ?? "", o.RpCode));
+        var alert = new RithmicAlert(
+            RithmicPlant.Admin,
+            RithmicMappers.MapAlertKind(o.AlertType),
+            o.Message ?? "",
+            o.RpCode);
+        _session.HandleAlert(alert);
     }
 }

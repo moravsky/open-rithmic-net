@@ -48,7 +48,7 @@ public static class ConnectionRegistry
             .ToArray();
     }
 
-    private static bool TryParse(string text, out RithmicConnection connection)
+    internal static bool TryParse(string text, out RithmicConnection connection)
     {
         connection = null!;
 

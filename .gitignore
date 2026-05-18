@@ -1,8 +1,11 @@
+zzz*
+ZZZ*
 bin/
 obj/
 *.user
 *.suo
 .vs/
 *.log
+.claude*
 rithmic_ssl_cert_auth_params
 rithmic.log*
