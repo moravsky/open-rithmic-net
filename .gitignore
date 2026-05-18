@@ -1,0 +1,8 @@
+bin/
+obj/
+*.user
+*.suo
+.vs/
+*.log
+rithmic_ssl_cert_auth_params
+rithmic.log*
