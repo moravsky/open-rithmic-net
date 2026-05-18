@@ -6,8 +6,17 @@ namespace OpenRithmic;
 
 public sealed record ConnectOptions(
     bool IncludeMarketData = true,
+    bool PluginMode = false,
     TimeSpan? Timeout = null,
     string? LogFilePath = "rithmic.log");
+
+internal static class PluginEndpoints
+{
+    // R | Trader Pro listens on these local ports when "Allow Plug-ins" is on.
+    // See Rithmic Programmer's Guide, "Using R | Trader Pro as a Plug-In Host".
+    public const string MarketData = "127.0.0.1:3010";
+    public const string History    = "127.0.0.1:3012";
+}
 
 public sealed class RithmicSession : IDisposable
 {
@@ -68,9 +77,19 @@ public sealed class RithmicSession : IDisposable
 
         try
         {
+            if (_options.PluginMode)
+            {
+                // Plug-in mode: route MD/IH through R | Trader Pro's local listeners.
+                // REngine reads these on construction.
+                Environment.SetEnvironmentVariable("RAPI_MD_ENCODING", "4");
+                Environment.SetEnvironmentVariable("RAPI_IH_ENCODING", "4");
+            }
+
             _engine = new REngine(engineParams);
 
-            var mdCnnctPt = _options.IncludeMarketData ? connection.MdCnnctPt : string.Empty;
+            var mdCnnctPt = _options.IncludeMarketData
+                ? (_options.PluginMode ? PluginEndpoints.MarketData : connection.MdCnnctPt)
+                : string.Empty;
 
             _engine.login(
                 _callbacks,

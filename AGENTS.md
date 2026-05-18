@@ -77,6 +77,13 @@ Typical startup sequence:
 3. `subscribeOrder(account)` -> receive `FillReport`s
 4. `subscribePnL(account)` -> receive `PnlReplay` then `PnlUpdate` stream
 
+## R | Trader Pro Plug-In Mode
+Rithmic lets an R | API app attach to a running R | Trader Pro process as a plug-in client. R | Trader Pro then acts as a proxy and multiple plug-in apps can share the underlying Rithmic session without kicking each other off. Use it via `ConnectOptions(PluginMode: true)` (the console exposes `--plugin`). Mechanics:
+
+- Before `new REngine(...)`, set env vars `RAPI_MD_ENCODING=4` and `RAPI_IH_ENCODING=4`. `RithmicSession` does this when `PluginMode` is on.
+- Override `sMdCnnctPt` to `127.0.0.1:3010` and (if you also want IH) `sIhCnnctPt` to `127.0.0.1:3012`. We currently only swap MD; IH stays unused in this sample.
+- R | Trader Pro must be running with **Allow Plug-ins** enabled (button turns yellow on the login screen) and logged in with the same User ID we pass.
+
 ## Coding Standards
 - **Style**: `<LangVersion>latest</LangVersion>` -- use modern C# features (primary constructors, collection expressions, file-scoped namespaces, nullable refs). Enable `<Nullable>enable</Nullable>`.
 - **Naming**: PascalCase for methods/properties; prefix private fields with `_`. The Rithmic sample uses `PRI_` prefix and Hungarian (`oInfo`, `sUser`) -- do NOT propagate that style into our code, but match it inside files copied verbatim from the reference.

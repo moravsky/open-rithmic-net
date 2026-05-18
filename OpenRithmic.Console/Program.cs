@@ -61,7 +61,10 @@ try
         connection,
         opts.User!,
         opts.Password!,
-        new ConnectOptions(IncludeMarketData: !opts.NoMarketData, Timeout: TimeSpan.FromSeconds(30)),
+        new ConnectOptions(
+            IncludeMarketData: !opts.NoMarketData,
+            PluginMode:        opts.Plugin,
+            Timeout:           TimeSpan.FromSeconds(30)),
         shutdown.Token);
 }
 catch (OperationCanceledException)

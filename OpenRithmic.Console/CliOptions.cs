@@ -9,6 +9,7 @@ internal sealed class CliOptions
     public bool ListConnections { get; set; }
     public bool Help { get; set; }
     public bool NoMarketData { get; set; }
+    public bool Plugin { get; set; }
 
     public static CliOptions Parse(string[] args)
     {
@@ -39,6 +40,9 @@ internal sealed class CliOptions
                 case "--no-md":
                     opts.NoMarketData = true;
                     break;
+                case "--plugin":
+                    opts.Plugin = true;
+                    break;
                 default:
                     throw new ArgumentException($"Unknown argument: {args[i]}");
             }
@@ -63,6 +67,9 @@ internal sealed class CliOptions
           --password <password>            Rithmic login password
           --cert <path>                    Full path to rithmic_ssl_cert_auth_params (sets MML_SSL_CLNT_AUTH_FILE)
           --no-md                          Skip market-data login (PnL+TS only)
+          --plugin                         Plug-in mode: attach as an R | Trader Pro plug-in
+                                           client (requires R | Trader Pro running with
+                                           "Allow Plug-ins" enabled)
           --list-connections               Print all embedded System/Gateway pairs and exit
           -h, --help                       Show this help
         """;
