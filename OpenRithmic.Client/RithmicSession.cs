@@ -5,7 +5,7 @@ using OpenRithmic.Internal;
 namespace OpenRithmic;
 
 public sealed record ConnectOptions(
-    bool IncludeMarketData = true,
+    bool EnableMarketData = true,
     bool PluginMode = false,
     TimeSpan? Timeout = null,
     string? LogFilePath = "rithmic.log");
@@ -87,7 +87,7 @@ public sealed class RithmicSession : IDisposable
 
             _engine = new REngine(engineParams);
 
-            var mdCnnctPt = _options.IncludeMarketData
+            var mdCnnctPt = _options.EnableMarketData
                 ? (_options.PluginMode ? PluginEndpoints.MarketData : connection.MdCnnctPt)
                 : string.Empty;
 
@@ -200,7 +200,7 @@ public sealed class RithmicSession : IDisposable
         if (!_accountsReceived) return;
         if (!_loggedInPlants.Contains(RithmicPlant.TradingSystem)) return;
         if (!_loggedInPlants.Contains(RithmicPlant.PnL)) return;
-        if (_options.IncludeMarketData && !_loggedInPlants.Contains(RithmicPlant.MarketData)) return;
+        if (_options.EnableMarketData && !_loggedInPlants.Contains(RithmicPlant.MarketData)) return;
         _readyTcs?.TrySetResult();
     }
 }

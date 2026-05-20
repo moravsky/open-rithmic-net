@@ -6,7 +6,7 @@ public class ConnectOptionsTests
     public void Defaults_match_documented_behavior()
     {
         var opts = new ConnectOptions();
-        Assert.True(opts.IncludeMarketData);
+        Assert.True(opts.EnableMarketData);
         Assert.False(opts.PluginMode);
         Assert.Null(opts.Timeout);
         Assert.Equal("rithmic.log", opts.LogFilePath);
@@ -17,7 +17,7 @@ public class ConnectOptionsTests
     {
         var opts = new ConnectOptions(PluginMode: true);
         Assert.True(opts.PluginMode);
-        Assert.True(opts.IncludeMarketData);
+        Assert.True(opts.EnableMarketData);
     }
 
     // The exact endpoints are baked in to the public contract: anyone driving

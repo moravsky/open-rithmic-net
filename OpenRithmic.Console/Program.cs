@@ -62,7 +62,7 @@ try
         opts.User!,
         opts.Password!,
         new ConnectOptions(
-            IncludeMarketData: !opts.NoMarketData,
+            EnableMarketData:  opts.EnableMarketData,
             PluginMode:        opts.Plugin,
             Timeout:           TimeSpan.FromSeconds(30)),
         shutdown.Token);

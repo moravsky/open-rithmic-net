@@ -84,6 +84,22 @@ Rithmic lets an R | API app attach to a running R | Trader Pro process as a plug
 - Override `sMdCnnctPt` to `127.0.0.1:3010` and (if you also want IH) `sIhCnnctPt` to `127.0.0.1:3012`. We currently only swap MD; IH stays unused in this sample.
 - R | Trader Pro must be running with **Allow Plug-ins** enabled (button turns yellow on the login screen) and logged in with the same User ID we pass.
 
+## Plant Capability & Concurrency
+Rithmic's "one session per user" enforcement is per-plant, not global:
+
+- **MD plant** -- exclusive. A second login on the same user kicks the first off.
+- **TS plant** -- tolerates concurrent logins from the same Rithmic user.
+- **PnL plant** -- tolerates concurrent logins from the same Rithmic user.
+
+With MD disabled you still get accounts, balances, fills/status reports, account-level risk/lockouts, and live open/closed PnL. You lose ticks/quotes/L2, TradePrint, BestBid/AskQuote, symbol search, and instrument reference data -- all MD-only.
+
+This gives two patterns for running multiple apps under the same Rithmic user:
+
+1. **Plug-in mode** (`--plugin` / `ConnectOptions(PluginMode: true)`) -- R | Trader Pro proxies the Rithmic session; every plug-in keeps MD. Requires R | Trader Pro running with **Allow Plug-ins** on.
+2. **No-MD secondaries** (`--enable-market-data false` / `ConnectOptions(EnableMarketData: false)`) -- secondary apps pass `sMdCnnctPt = string.Empty` to `engine.login()` and just skip the MD plant. No R | Trader Pro needed; secondaries lose MD-only data.
+
+`RithmicSession` already implements (2): when `EnableMarketData` is false it sends an empty MD connect point and excludes the MD plant from the readiness wait.
+
 ## Coding Standards
 - **Style**: `<LangVersion>latest</LangVersion>` -- use modern C# features (primary constructors, collection expressions, file-scoped namespaces, nullable refs). Enable `<Nullable>enable</Nullable>`.
 - **Naming**: PascalCase for methods/properties; prefix private fields with `_`. The Rithmic sample uses `PRI_` prefix and Hungarian (`oInfo`, `sUser`) -- do NOT propagate that style into our code, but match it inside files copied verbatim from the reference.

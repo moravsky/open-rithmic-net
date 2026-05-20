@@ -8,7 +8,7 @@ internal sealed class CliOptions
     public string? CertFile { get; set; }
     public bool ListConnections { get; set; }
     public bool Help { get; set; }
-    public bool NoMarketData { get; set; }
+    public bool EnableMarketData { get; set; } = true;
     public bool Plugin { get; set; }
 
     public static CliOptions Parse(string[] args)
@@ -37,8 +37,8 @@ internal sealed class CliOptions
                 case "--cert":
                     opts.CertFile = NextArg(args, ref i, "--cert");
                     break;
-                case "--no-md":
-                    opts.NoMarketData = true;
+                case "--enable-market-data":
+                    opts.EnableMarketData = ParseBool(NextArg(args, ref i, "--enable-market-data"), "--enable-market-data");
                     break;
                 case "--plugin":
                     opts.Plugin = true;
@@ -57,6 +57,13 @@ internal sealed class CliOptions
         return args[++i];
     }
 
+    private static bool ParseBool(string value, string name) => value.ToLowerInvariant() switch
+    {
+        "true"  or "1" or "yes" or "on"  => true,
+        "false" or "0" or "no"  or "off" => false,
+        _ => throw new ArgumentException($"{name} expects true or false (got '{value}')"),
+    };
+
     public static string UsageText => """
         Usage:
           OpenRithmic.Console --user <user> --password <password> [options]
@@ -66,7 +73,9 @@ internal sealed class CliOptions
           --user <user>                    Rithmic login user
           --password <password>            Rithmic login password
           --cert <path>                    Full path to rithmic_ssl_cert_auth_params (sets MML_SSL_CLNT_AUTH_FILE)
-          --no-md                          Skip market-data login (PnL+TS only)
+          --enable-market-data <bool>      Log in to the MD plant (default: true).
+                                           Pass 'false' to skip MD and run alongside
+                                           another session for the same user.
           --plugin                         Plug-in mode: attach as an R | Trader Pro plug-in
                                            client (requires R | Trader Pro running with
                                            "Allow Plug-ins" enabled)

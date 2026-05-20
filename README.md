@@ -16,9 +16,6 @@ dotnet run --project OpenRithmic.Console -c Release -- `
     --user <user> --password <password>
 ```
 
-That hits the default `Rithmic Test/Orangeburg` UAT gateway. Pick a different
-one with `--connection`, or list all possiblities with:
-
 ```powershell
 dotnet run --project OpenRithmic.Console -c Release -- --list-connections
 ```
@@ -48,6 +45,19 @@ Accounts (1):
   FILL  BUY   ESZ5     CME   qty=1   px=5,000.2500   14:32:11.412
 ```
 
+### Options
+
+| Flag                       | Default                    | Purpose                                                                                  |
+| -------------------------- | -------------------------- | ---------------------------------------------------------------------------------------- |
+| `--user <user>`            | --                         | Rithmic login user.                                                                      |
+| `--password <password>`    | --                         | Rithmic login password.                                                                  |
+| `--connection "<S>/<G>"`   | `Rithmic Test/Orangeburg`  | Pick a Rithmic system/gateway. See `--list-connections` for the full list.               |
+| `--enable-market-data <bool>` | `true`                  | Log in to the MD plant. Pass `false` to share a Rithmic user across apps (see below).    |
+| `--plugin`                 | off                        | Attach as an R \| Trader Pro plug-in client instead of opening a direct Rithmic session. |
+| `--cert <path>`            | unset                      | Path to `rithmic_ssl_cert_auth_params` (sets `MML_SSL_CLNT_AUTH_FILE`).                  |
+| `--list-connections`       | --                         | Print all embedded `System/Gateway` pairs and exit.                                      |
+| `-h`, `--help`             | --                         | Show usage and exit.                                                                     |
+
 ### Sharing Rithmic connection via R | Trader Pro (plug-in mode)
 
 R | Trader Pro software can act as a connection proxy: launch it once with
@@ -68,6 +78,26 @@ without burning extra Rithmic sessions or kicking each other off.
        --user <user> --password <password> --plugin
    ```
 5. Run other Rithmic apps in plugin mode. You can launch multiple plug-in apps in parallel; they all share R | Trader Pro's underlying Rithmic connection.
+
+### Sharing a Rithmic user across apps without R | Trader Pro
+
+Rithmic's "one session per user" rule is enforced only on the **Market Data**
+plant. The Trading System and PnL plants happily accept concurrent logins
+from the same user. So if you're willing to give up live ticks / quotes /
+L2 / `TradePrint` / symbol search on the secondary app, you can run it
+alongside another R | API+ app under the same Rithmic credentials, no
+R | Trader Pro required:
+
+```powershell
+dotnet run --project OpenRithmic.Console -c Release -- `
+    --user <user> --password <password> --enable-market-data false
+```
+
+`--enable-market-data false` (`ConnectOptions(EnableMarketData: false)` from
+code) makes `RithmicSession` pass an empty `sMdCnnctPt` to `engine.login()`
+-- it skips the MD plant entirely and won't fight the other app for that
+slot. You still get accounts, balances, fills, status reports, and live
+open/closed PnL.
 
 
 ## Layout
