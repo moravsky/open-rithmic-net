@@ -1,0 +1,71 @@
+System Name  : HalcyonTrader
+Gateway Name : Chicago Area
+File Version : 17.90.0.0
+
+Configuration and Parameters
+============================
+
+We recommend that you use the configurations below as we have specified them.
+These configurations require you to be able to resolve the hostnames listed
+below which are resolvable on the public internet by DNS.
+
+Some parameters may not apply to your version of RAPI, such as
+REngineParams.sAdmCnnctPt, which only applies to versions prior to 12.1.0.0.
+
+For C++ Rithmic APIs :
+======================
+
+REngineParams :
+
+REngineParams.sAdmCnnctPt : dd_admin_sslc
+REngineParams.envp : The following variables need to be present :
+
+   * MML_DMN_SRVR_ADDR=ritpz01001.01.rithmic.com:65000~ritpz01000.01.rithmic.com:65000~ritpz01001.01.rithmic.net:65000~ritpz01000.01.rithmic.net:65000~ritpz01001.01.theomne.net:65000~ritpz01000.01.theomne.net:65000~ritpz01001.01.theomne.com:65000~ritpz01000.01.theomne.com:65000
+   * MML_DOMAIN_NAME=rithmic_prod_01_dmz_domain
+   * MML_LIC_SRVR_ADDR=ritpz01000.01.rithmic.com:56000~ritpz01001.01.rithmic.com:56000~ritpz01000.01.rithmic.net:56000~ritpz01001.01.rithmic.net:56000~ritpz01000.01.theomne.net:56000~ritpz01001.01.theomne.net:56000~ritpz01000.01.theomne.com:56000~ritpz01001.01.theomne.com:56000~ritpz24050.rithmic.com:56000~ritpz24050.rithmic.net:56000~ritpz24050.theomne.net:56000~ritpz24050.theomne.com:56000~ritpz23010.rithmic.com:56000~ritpz23010.rithmic.net:56000~ritpz23010.theomne.net:56000~ritpz23010.theomne.com:56000~ritpz23011.rithmic.com:56000~ritpz23011.rithmic.net:56000~ritpz23011.theomne.net:56000~ritpz23011.theomne.com:56000~ritpz24013.rithmic.com:56000~ritpz24013.rithmic.net:56000~ritpz24013.theomne.net:56000~ritpz24013.theomne.net:56000
+   * MML_LOC_BROK_ADDR=ritpz01000.01.rithmic.com:64100
+   * MML_LOGGER_ADDR=ritpz01000.01.rithmic.com:45454~ritpz01000.01.rithmic.net:45454~ritpz01000.01.theomne.net:45454~ritpz01000.01.theomne.com:45454
+   * MML_LOG_TYPE=log_net
+   * MML_SSL_CLNT_AUTH_FILE=rithmic_ssl_cert_auth_params (full path to file)
+   * USER=my_user_name (put your user name)
+
+Repository Login Param: 
+
+   * sCnnctPt : login_agent_rp_htfc
+
+Login Params: 
+
+   * LoginParams.sMdCnnctPt  : login_agent_tp_htfc
+             - or -
+   * LoginParams.sMdCnnctPt  : login_agent_tp_agg_htfc (for aggregated market data)
+
+   * LoginParams.sIhCnnctPt  : login_agent_hp_htfc
+   * LoginParams.sTsCnnctPt  : login_agent_op_htfc
+   * LoginParams.sPnLCnnctPt : login_agent_pnl_htfc
+
+For .NET Rithmic APIs :
+=======================
+
+REngineParams :
+
+   * REngineParams.AdmCnnctPt  : dd_admin_sslc
+   * REngineParams.DmnSrvrAddr : ritpz01001.01.rithmic.com:65000~ritpz01000.01.rithmic.com:65000~ritpz01001.01.rithmic.net:65000~ritpz01000.01.rithmic.net:65000~ritpz01001.01.theomne.net:65000~ritpz01000.01.theomne.net:65000~ritpz01001.01.theomne.com:65000~ritpz01000.01.theomne.com:65000
+   * REngineParams.DomainName  : rithmic_prod_01_dmz_domain
+   * REngineParams.LicSrvrAddr : ritpz01000.01.rithmic.com:56000~ritpz01001.01.rithmic.com:56000~ritpz01000.01.rithmic.net:56000~ritpz01001.01.rithmic.net:56000~ritpz01000.01.theomne.net:56000~ritpz01001.01.theomne.net:56000~ritpz01000.01.theomne.com:56000~ritpz01001.01.theomne.com:56000~ritpz24050.rithmic.com:56000~ritpz24050.rithmic.net:56000~ritpz24050.theomne.net:56000~ritpz24050.theomne.com:56000~ritpz23010.rithmic.com:56000~ritpz23010.rithmic.net:56000~ritpz23010.theomne.net:56000~ritpz23010.theomne.com:56000~ritpz23011.rithmic.com:56000~ritpz23011.rithmic.net:56000~ritpz23011.theomne.net:56000~ritpz23011.theomne.com:56000~ritpz24013.rithmic.com:56000~ritpz24013.rithmic.net:56000~ritpz24013.theomne.net:56000~ritpz24013.theomne.net:56000
+   * REngineParams.LocBrokAddr : ritpz01000.01.rithmic.com:64100
+   * REngineParams.LoggerAddr  : ritpz01000.01.rithmic.com:45454~ritpz01000.01.rithmic.net:45454~ritpz01000.01.theomne.net:45454~ritpz01000.01.theomne.com:45454
+
+REngine::loginRepository() Params : 
+
+   * sCnnctPt : login_agent_rp_htfc
+
+
+REngine::login() Params :
+
+   * sMdCnnctPt  : login_agent_tp_htfc
+             - or -
+   * sMdCnnctPt  : login_agent_tp_agg_htfc (for aggregated market data)
+
+   * sIhCnnctPt  : login_agent_hp_htfc
+   * sTsCnnctPt  : login_agent_op_htfc
+   * sPnLCnnctPt : login_agent_pnl_htfc

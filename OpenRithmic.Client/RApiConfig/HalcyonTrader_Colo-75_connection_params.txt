@@ -1,0 +1,71 @@
+System Name  : HalcyonTrader
+Gateway Name : Colo 75
+File Version : 17.90.0.0
+
+Configuration and Parameters
+============================
+
+We recommend that you use the configurations below as we have specified them.
+These configurations require you to be able to resolve the hostnames listed
+below which are resolvable on the public internet by DNS.
+
+Some parameters may not apply to your version of RAPI, such as
+REngineParams.sAdmCnnctPt, which only applies to versions prior to 12.1.0.0.
+
+For C++ Rithmic APIs :
+======================
+
+REngineParams :
+
+REngineParams.sAdmCnnctPt : dd_admin_sslc
+REngineParams.envp : The following variables need to be present :
+
+   * MML_DMN_SRVR_ADDR=ritpz04425-eth2.75.04.rithmic.com:65000~ritpz04421-eth5.75.04.rithmic.com:65000
+   * MML_DOMAIN_NAME=rithmic_colo_75_domain
+   * MML_LIC_SRVR_ADDR=ritpz04421-eth5.75.04.rithmic.com:56000~ritpz04425-eth2.75.04.rithmic.com:56000
+   * MML_LOC_BROK_ADDR=ritpz04421-eth5.75.04.rithmic.com:64100
+   * MML_LOGGER_ADDR=ritpz04421-eth5.75.04.rithmic.com:45454
+   * MML_LOG_TYPE=log_net
+   * MML_SSL_CLNT_AUTH_FILE=rithmic_ssl_cert_auth_params (full path to file)
+   * USER=my_user_name (put your user name)
+
+Repository Login Param: 
+
+   * sCnnctPt : login_agent_repository_htfc
+
+Login Params: 
+
+   * LoginParams.sMdCnnctPt  : login_agent_tp_htfc
+             - or -
+   * LoginParams.sMdCnnctPt  : login_agent_tp_agg_htfc (for aggregated market data)
+
+   * LoginParams.sIhCnnctPt  : login_agent_history_htfc
+   * LoginParams.sTsCnnctPt  : login_agent_op_htfc
+   * LoginParams.sPnLCnnctPt : login_agent_pnl_htfc
+
+For .NET Rithmic APIs :
+=======================
+
+REngineParams :
+
+   * REngineParams.AdmCnnctPt  : dd_admin_sslc
+   * REngineParams.DmnSrvrAddr : ritpz04425-eth2.75.04.rithmic.com:65000~ritpz04421-eth5.75.04.rithmic.com:65000
+   * REngineParams.DomainName  : rithmic_colo_75_domain
+   * REngineParams.LicSrvrAddr : ritpz04421-eth5.75.04.rithmic.com:56000~ritpz04425-eth2.75.04.rithmic.com:56000
+   * REngineParams.LocBrokAddr : ritpz04421-eth5.75.04.rithmic.com:64100
+   * REngineParams.LoggerAddr  : ritpz04421-eth5.75.04.rithmic.com:45454
+
+REngine::loginRepository() Params : 
+
+   * sCnnctPt : login_agent_repository_htfc
+
+
+REngine::login() Params :
+
+   * sMdCnnctPt  : login_agent_tp_htfc
+             - or -
+   * sMdCnnctPt  : login_agent_tp_agg_htfc (for aggregated market data)
+
+   * sIhCnnctPt  : login_agent_history_htfc
+   * sTsCnnctPt  : login_agent_op_htfc
+   * sPnLCnnctPt : login_agent_pnl_htfc
