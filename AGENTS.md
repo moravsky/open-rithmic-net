@@ -135,3 +135,10 @@ This gives two patterns for running multiple apps under the same Rithmic user:
 # Secrets
 - Never commit Rithmic credentials or any SSL cert auth file.
 - Pass user/password via command-line args or env vars; do not hardcode them in source.
+
+# Architecture Documentation
+- ARCHITECTURE.md contains the architectural layer diagram, key design decisions, and file map.
+- Update it when important decisions happen: new patterns, removed features, changed threading models,
+  new connection modes, or shifts in how components interact.
+- Keep it concise -- one page per major subsystem. The goal is "why we did it this way," not a code walkthrough.
+- If a decision is irreversible or affects future maintainers, document it in ARCHITECTURE.md even if AGENTS.md covers the "how."
